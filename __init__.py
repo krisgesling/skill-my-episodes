@@ -20,12 +20,12 @@ class MyEpisodesSkill(MycroftSkill):
     #   'Hello world'
     #   'Howdy you great big world'
     #   'Greetings planet earth'
-    @intent_handler(IntentBuilder("query-myepisodes").require("Hello").require("MyEpisodes"))
+    @intent_handler(IntentBuilder("query").require("Query"))
     def handle_hello_world_intent(self, message):
         # In this case, respond by simply speaking a canned response.
         # Mycroft will randomly speak one of the lines from the file
         #    dialogs/en-us/hello.world.dialog
-        self.speak_dialog("hello.world")
+        self.speak_dialog("querying")
 
     # @intent_handler(IntentBuilder("").require("Count").require("Dir"))
     # def handle_count_intent(self, message):
