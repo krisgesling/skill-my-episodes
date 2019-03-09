@@ -13,18 +13,6 @@ At this point Mycroft will be able to give you the number of episodes not acquir
 * "any new episodes"
 * "anything new on my episodes"
 
-## Posible future features and improvements
-* Mark episodes as acquired and/watched 
-* Search and add shows to MyEPisodes.com list
-* Mark shows as ignored/unignored
-* Get status of show relative to the MyEpisodes.com user list (am I watching this show? or am I ignoring this show?)
-* Better information ablut current unacquired/unwatched shows by collapsing list of episodes and only speaking one dialog per show (eg: The Show Season 1 Episodes 1 through 5)
-
-## Under devevelopment
-* Get details about unwatched/unacquired shows in list like the name of the show the season and episode number
-
-**Please use the Issue reporting facility of Github if you have any ideeas on other functions or if you would like to prioritize the development of one function or another.**
-
 ## Credits 
 Bogdan Brezuica (@brezuicabogdan)
 

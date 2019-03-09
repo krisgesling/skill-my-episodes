@@ -24,17 +24,16 @@ MONTHS = {
 }
 
 
-class MyEpisodes(MycroftSkill):
+class MyEpisodesSkill(MycroftSkill):
 
     def __init__(self):
-        super(MyEpisodes, self).__init__(name="MyEpisodes")
+        super(MyEpisodesSkill, self).__init__(name="MyEpisodesSkill")
         self.unacquired = {}
         self.unwatched = {}
         self.shows = {}
 
-    def initialize(self):
-        if "useWatched" not in self.settings:
-            self.settings["useWatched"] = False
+    # def initialize(self):
+    #     self.updateUnacquired()
 
     @intent_handler(IntentBuilder("query").require("Query"))
     def handle_query_intent(self, message):
@@ -164,6 +163,6 @@ class MyEpisodes(MycroftSkill):
             self.speak_dialog("notSetUp")
             return False
         return True
-        
+
 def create_skill():
-    return MyEpisodes()
+    return MyEpisodesSkill()
