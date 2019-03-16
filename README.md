@@ -4,7 +4,8 @@ The My Episodes Skill allows Mycroft to interact with [MyEpisodes.com](http://ww
 
 ## About 
 You will be able to ask Mycroft to check the status of your shows list handled by [MyEpisodes.com](http://www.myepisodes.com). 
-At this point Mycroft will be able to give you the number of episodes not acquired and optionally the number of episodes acquired but not watched.
+Mycroft will be able to give you the number of episodes not acquired and optionally the number of episodes acquired but not watched.
+Also you will be able to find out the unacquired seasons and episdes numbers
 
 ## Examples 
 * "check my episodes"
@@ -14,14 +15,12 @@ At this point Mycroft will be able to give you the number of episodes not acquir
 * "anything new on my episodes"
 
 ## Posible future features and improvements
-* Mark episodes as acquired and/watched 
 * Search and add shows to MyEPisodes.com list
 * Mark shows as ignored/unignored
 * Get status of show relative to the MyEpisodes.com user list (am I watching this show? or am I ignoring this show?)
-* Better information ablut current unacquired/unwatched shows by collapsing list of episodes and only speaking one dialog per show (eg: The Show Season 1 Episodes 1 through 5)
 
 ## Under devevelopment
-* Get details about unwatched/unacquired shows in list like the name of the show the season and episode number
+* Mark episodes as acquired and/watched 
 
 **Please use the Issue reporting facility of Github if you have any ideeas on other functions or if you would like to prioritize the development of one function or another.**
 
