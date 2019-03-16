@@ -47,12 +47,14 @@ class MyEpisodes(MycroftSkill):
         type = "unacquired"
         if self.unacquired['totalCnt'] == 0:
             self.speak_dialog('noNewEpisodes', data={'type': type})
-        elif self.unacquired['airingTodayCnt'] > 0:
+            return
+        if self.unacquired['airingTodayCnt'] > 0:
             self.speak_dialog('unacquiredEpisodesWithAiringToday', data={
                               'total': self.unacquired['totalCnt'], 'plural': 's' if self.unacquired['totalCnt'] > 1 else '', 'airingToday': self.unacquired['airingTodayCnt']})
         else:
             self.speak_dialog('unacquiredEpisodes', data={
                               'total': self.unacquired['totalCnt'], 'plural': 's' if self.unacquired['totalCnt'] > 1 else ''})
+        self.speakEpisodesDetails(self.unacquired['episodes2speak'])
         wait_while_speaking()
         if self.settings.get("useWatched") and self.unwatched['totalCnt'] > 0:
             self.speak_dialog("unwatchedEpisodes", data={
@@ -61,8 +63,15 @@ class MyEpisodes(MycroftSkill):
     def stop(self):
         return True
 
+    def speakEpisodesDetails(self, eps):
+        if self.ask_yesno("details") == 'yes':
+            self.speak(''.join(eps))
+        else:
+            self.speak_dialog('ok')
+
     def processFeed(self, feed):
         episodes = {}
+        tmp_episodes = {}
         totalCnt = 0
         airingTodayCnt = 0
         if len(feed.entries) > 0 and 'guid' in feed.entries[0]:
@@ -77,10 +86,11 @@ class MyEpisodes(MycroftSkill):
                     self.log.error("Error parsing episode "+entry.guid)
                     continue
                 showId = epGuidArr[0]
-                season = epGuidArr[1]
-                epMeta['episode'] = epGuidArr[2]
+                season = int(epGuidArr[1])
+                episode = int(epGuidArr[2])
+                epMeta['episode'] = episode
 
-                episodeId = entry.guid
+                # episodeId = entry.guid
                 epTitleArray = entry.title.split('][')
                 if(len(epTitleArray) != 4):
                     self.log.error("Could not get show and episode titles")
@@ -99,22 +109,71 @@ class MyEpisodes(MycroftSkill):
                         epMeta['epAirDate'], "%d-%m-%Y").date()
                     if epMeta['epAirDate'] == datetime.datetime.now().date():
                         airingTodayCnt = airingTodayCnt + 1
+                        epMeta['airingToday'] = True
+                    else:
+                        epMeta['airingToday'] = False
                 if showId not in episodes:
                     episodes[showId] = {}
+                    tmp_episodes[showId] = {}
                 if season not in episodes[showId]:
                     episodes[showId][season] = {}
-                if episodeId not in episodes[showId][season]:
-                    episodes[showId][season] = epMeta
+                    tmp_episodes[showId][season] = []
+                if episode not in episodes[showId][season]:
+                    episodes[showId][season][episode] = epMeta
+                    tmp_episodes[showId][season].append(episode)
                     totalCnt = totalCnt + 1
         else:
             self.log.debug('No episodes in feed')
             self.log.debug(feed)
+        episodes2speak = []
+        if totalCnt > 0:
+            for showId in tmp_episodes:
+                episodes2speak.append("%s " % self.shows[showId])
+                for season in tmp_episodes[showId]:
+                    episodes2speak.append("season %s, " % season)
+                    season = tmp_episodes[showId][season]
+                    season.sort()
+                    startEp = season[0]
+                    i = 1
+                    endEp = startEp
+                    seq = []
+                    while i < len(season):
+                        if season[i] == (endEp + 1):
+                            endEp = season[i]
+                        else:
+                            seq.append(self._speakEpRange(startEp,endEp))
+                            startEp = season[i]
+                            endEp = startEp
+                        i = i + 1
+                    seq.append(self._speakEpRange(startEp,endEp))
+                    if len(seq) == 1:
+                        episodes2speak.append(seq[0])
+                    else:
+                        cnt = 0
+                        for sq in seq:
+                            if cnt > 0 :
+                                if cnt < len(seq)-1:
+                                    sq = ", %s" % sq
+                                else:
+                                    sq = " and %s " % sq
+                            cnt = cnt + 1
+                            episodes2speak.append(sq)
+                    episodes2speak.append(', ')
         return {
             'episodes': episodes,
+            'episodes2speak': episodes2speak,
             'totalCnt': totalCnt,
             'airingTodayCnt': airingTodayCnt,
             'updatedAt': datetime.datetime.now().date()
         }
+
+    def _speakEpRange(self, minEp, maxEp):
+        if minEp == maxEp:
+            return "episode %s" % minEp
+        elif maxEp == (minEp + 1):
+            return "episodes %s and %s" % (minEp, maxEp)
+        else:
+            return "episodes %s through %s" % (minEp, maxEp)
 
     def updateUnacquired(self):
         self.log.debug("Updating unacquired episodes list")
