@@ -36,7 +36,9 @@ class MyEpisodes(MycroftSkill):
         if "useWatched" not in self.settings:
             self.settings["useWatched"] = False
 
-    @intent_handler(IntentBuilder("query").require("Query"))
+    @intent_handler(IntentBuilder("query")
+        .require("check")
+        .require("episodes"))
     def handle_query_intent(self, message):
         if not self.isConfigured():
             return
