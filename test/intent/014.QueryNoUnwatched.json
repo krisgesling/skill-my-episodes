@@ -1,5 +1,5 @@
 {
     "utterance": "check my episodes",
     "intent_type": "query",
-    "expected_dialog": "unacquiredEpisodes"
+    "expected_dialog": "notSetUp"
 }
